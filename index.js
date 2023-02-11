@@ -1,19 +1,34 @@
-const mongoose = require("mongoose");
-const MongoDB_API = "mongodb://127.0.0.1/bookApp";
-const PORT = 9000;
+const express = require("express");
+require("dotenv").config()
 
-const app = require("./app");
-mongoose.set('strictQuery', true);
+const mongoose = require("mongoose")
+mongoose.connect("mongodb://127.0.0.1/userDBMongoose")  //"mongodb://127.0.0.1/userDBMongoose"
+mongoose.set('strictQuery', false)
 
- function main() {
-    mongoose.connect(MongoDB_API, (err) => {
-        if(err) console.log("err>>> " + err);
-        else console.log("Connected to Database");
+const app = express();
+
+const cors = require("cors")
+app.use(cors());
+
+const bodyParser = require("body-parser");
+app.use(express.json());
+app.use(bodyParser.json());
+
+const registerRoute = require('./Routes/register')
+const loginRoute = require('./Routes/login')
+const listRoute = require('./Routes/list')
+const Authentication = require('./middleware/auth')
+
+app.use("/", registerRoute)
+app.use("/", loginRoute)
+app.use("/",Authentication, listRoute)
+
+
+    app.get("*" , (req , res)=> {
+        res.status(404).send("API not found")
     })
 
-    app.listen(PORT, (err) => {
-        if(err) console.log("err>>> " + err);
-        else console.log("running on server " + PORT);
-    })
-} 
-main() 
+
+app.listen(5000 , ()=> {
+    console.log("The server is up at port 5000");
+})

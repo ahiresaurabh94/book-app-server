@@ -11,7 +11,7 @@ router.post("/register", async (req, res) => {
         if (IsUser) {
             return res.status(400).json({
                 status: "Failed",
-                message: "User Exists with given Email"
+                message: "User Exists with given userName"
             })
         }
         else {
